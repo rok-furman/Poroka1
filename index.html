@@ -11,6 +11,7 @@
             background-color: #f8f8f8;
             color: #333;
             padding: 20px;
+            overflow: hidden; /* Skril presežek, ko je kamera v celozaslonskem načinu */
         }
 
         #welcome-text {
@@ -41,10 +42,17 @@
             height: 40px; /* Nastavil višino ikone kamere */
         }
 
-        #capture-photo {
-            display: none; /* Skril gumb za zajem fotografije */
-            position: absolute;
-            bottom: 10px;
+        #capture-photo,
+        #record-video {
+            display: none; /* Skril gumbe za zajem fotografije in snemanje videa */
+            padding: 10px;
+            margin: 10px;
+            background-color: #405de6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
         }
 
         #video-feed {
@@ -70,15 +78,16 @@
     <div id="start-camera" onclick="openCamera()">
         <img src="camera-icon.png" alt="Camera"> <!-- Dodal ikono kamere -->
     </div>
-    <div id="capture-photo" ontouchstart="startRecording()" ontouchend="stopRecording()">
-        <!-- Dodal funkcije za video zapis -->
-    </div>
+    <button id="capture-photo" onclick="capturePhoto()">Zajemi Fotografijo</button>
+    <button id="record-video" onclick="toggleRecording()">Snemaj Video</button>
     <video id="video-feed" autoplay muted></video>
     <span id="close-camera" onclick="closeCamera()">✖</span>
 
     <script>
         const weddingDate = new Date("2024-08-16T15:00:00").getTime();
         let videoStream;
+        let mediaRecorder;
+        let isRecording = false;
 
         function updateCountdown() {
             const now = new Date().getTime();
@@ -97,16 +106,23 @@
         function openCamera() {
             const startCameraButton = document.getElementById("start-camera");
             const capturePhotoButton = document.getElementById("capture-photo");
+            const recordVideoButton = document.getElementById("record-video");
             const videoFeed = document.getElementById("video-feed");
 
             startCameraButton.style.display = "none"; // Skril gumb za vklop kamere
-            capturePhotoButton.style.display = "block"; // Pokazal gumb za zajem fotografije
+            capturePhotoButton.style.display = "inline-block"; // Pokazal gumb za zajem fotografije
+            recordVideoButton.style.display = "inline-block"; // Pokazal gumb za snemanje videa
             videoFeed.style.display = "block"; // Pokazal video posnetek
 
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(function (stream) {
                     videoStream = stream;
                     videoFeed.srcObject = stream;
+
+                    // Dodano snemanje videa
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.ondataavailable = handleDataAvailable;
+                    mediaRecorder.onstop = handleRecordingStop;
                 })
                 .catch(function (error) {
                     console.error("Napaka pri dostopu do kamere:", error);
@@ -114,13 +130,45 @@
                 });
         }
 
+        function capturePhoto() {
+            // Dodaj kodo za zajem fotografije
+        }
+
+        function toggleRecording() {
+            if (isRecording) {
+                // Ustavi snemanje
+                mediaRecorder.stop();
+                isRecording = false;
+            } else {
+                // Začni snemanje
+                mediaRecorder.start();
+                isRecording = true;
+            }
+        }
+
+        function handleDataAvailable(event) {
+            // Obdelaj dostopne podatke (kadar je na voljo)
+            if (event.data.size > 0) {
+                const recordedBlob = new Blob([event.data], { type: 'video/webm' });
+                const url = URL.createObjectURL(recordedBlob);
+                window.open(url, '_blank'); // Odpri posnetek v novem zavihku
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        function handleRecordingStop() {
+            // Po potrebi obdelaj dogodek ustavitve snemanja
+        }
+
         function closeCamera() {
             const startCameraButton = document.getElementById("start-camera");
             const capturePhotoButton = document.getElementById("capture-photo");
+            const recordVideoButton = document.getElementById("record-video");
             const videoFeed = document.getElementById("video-feed");
 
             startCameraButton.style.display = "block"; // Pokazal gumb za vklop kamere
             capturePhotoButton.style.display = "none"; // Skril gumb za zajem fotografije
+            recordVideoButton.style.display = "none"; // Skril gumb za snemanje videa
             videoFeed.style.display = "none"; // Skril video posnetek
 
             if (videoStream) {
