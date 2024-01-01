@@ -60,7 +60,7 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            z-index: 1;
+            z-index: 3; /* Povečajte vrednost z-index na 3 ali višje */
             display: none;
         }
 
@@ -77,7 +77,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            z-index: 3;
+            z-index: 1; /* Zmanjšajte vrednost z-index na 1 */
         }
 
         #close-camera {
@@ -143,6 +143,7 @@
 
             startCameraButton.style.display = "none";
             capturePhotoButton.style.display = "block";
+            capturePhotoButton.style.zIndex = "3"; // Povečajte vrednost z-index na 3 ali višje
             videoFeed.style.display = "block";
 
             navigator.mediaDevices.getUserMedia({ video: true })
