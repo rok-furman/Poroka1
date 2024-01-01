@@ -16,9 +16,11 @@
             font-size: 24px;
             margin-bottom: 20px;
         }
-        #start-camera {
+        #start-camera,
+        #capture-photo {
             display: inline-block;
             padding: 10px;
+            margin: 10px;
             background-color: #405de6; /* Instagram modra */
             color: white;
             border: none;
@@ -26,15 +28,24 @@
             font-size: 16px;
             cursor: pointer;
         }
+        #video-feed {
+            margin: 20px auto;
+            max-width: 100%;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <h1>Dobrodošli na Naši Poročni Spletni Strani</h1>
     <p id="countdown">Čas do začetka poroke: <span id="countdown-timer"></span></p>
     <button id="start-camera" onclick="startCamera()">Začni Snemanje</button>
+    <button id="capture-photo" onclick="capturePhoto()">Zajemi Fotografijo</button>
+    <video id="video-feed" autoplay muted></video>
 
     <script>
         const weddingDate = new Date("2024-08-16T15:00:00").getTime();
+        let videoStream;
 
         function updateCountdown() {
             const now = new Date().getTime();
@@ -54,12 +65,28 @@
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(function (stream) {
                     alert("Dostop do kamere je zdaj omogočen!");
-                    // Tukaj lahko nadaljujete z uporabo stream-a (npr. prikaz slike v nekem elementu)
+                    videoStream = stream;
+                    const videoFeed = document.getElementById("video-feed");
+                    videoFeed.srcObject = stream;
                 })
                 .catch(function (error) {
                     console.error("Napaka pri dostopu do kamere:", error);
                     alert("Napaka pri dostopu do kamere. Preverite, ali imate kamero dovoljeno in poskusite znova.");
                 });
+        }
+
+        function capturePhoto() {
+            const canvas = document.createElement("canvas");
+            const videoFeed = document.getElementById("video-feed");
+            canvas.width = videoFeed.videoWidth;
+            canvas.height = videoFeed.videoHeight;
+            canvas.getContext("2d").drawImage(videoFeed, 0, 0, canvas.width, canvas.height);
+
+            const img = document.createElement("img");
+            img.src = canvas.toDataURL("image/png");
+
+            // Tukaj lahko nadaljujete z uporabo zajete fotografije (npr. prikaz v nekem elementu)
+            document.body.appendChild(img);
         }
     </script>
 </body>
