@@ -26,9 +26,30 @@
             margin-bottom: 20px;
         }
 
-        .camera-button {
+        #start-camera {
             position: absolute;
             bottom: 10px; /* Postavi krog na spodnji del strani */
+            left: 50%; /* Postavi krog na sredino glede na levo stran */
+            transform: translateX(-50%); /* Popravi položaj glede na širino kroga */
+            background-color: #405de6; /* Instagram modra */
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 2; /* Postavi nad video */
+        }
+
+        #start-camera img {
+            width: 40px; /* Nastavi širino ikone kamere */
+            height: 40px; /* Nastavi višino ikone kamere */
+        }
+
+        #capture-photo {
+            position: absolute;
+            bottom: 20px; /* Postavi krog na spodnji del strani */
             left: 50%; /* Postavi krog na sredino glede na levo stran */
             transform: translateX(-50%); /* Popravi položaj glede na širino kroga */
             background-color: white;
@@ -39,11 +60,7 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-        }
-
-        .camera-button img {
-            width: 40px; /* Nastavi širino ikone kamere */
-            height: 40px; /* Nastavi višino ikone kamere */
+            z-index: 1; /* Postavi pod gumb za vklop kamere */
         }
 
         #video-feed {
@@ -51,6 +68,10 @@
             width: 100%;
             height: 100vh;
             object-fit: cover;
+            position: fixed; /* Popravi položaj za prikaz čez cel zaslon */
+            top: 0;
+            left: 0;
+            z-index: 3; /* Postavi nad gumboma */
         }
 
         #close-camera {
@@ -60,14 +81,18 @@
             font-size: 24px;
             color: white;
             cursor: pointer;
+            z-index: 4; /* Postavi nad videom */
         }
     </style>
 </head>
 <body>
     <h1 id="welcome-text">Dobrodošli na Naši Poročni Spletni Strani</h1>
     <p id="countdown">Čas do začetka poroke: <span id="countdown-timer"></span></p>
-    <div class="camera-button" id="start-camera" onclick="openCamera()">
+    <div id="start-camera" onclick="openCamera()">
         <img src="camera-icon.png" alt="Camera"> <!-- Dodal ikono kamere -->
+    </div>
+    <div id="capture-photo" style="display: none;" onclick="capturePhoto()">
+        <!-- Dodaj kodo za ikono za zajem fotografije -->
     </div>
     <video id="video-feed" autoplay muted></video>
     <span id="close-camera" onclick="closeCamera()">✖</span>
@@ -92,9 +117,11 @@
 
         function openCamera() {
             const startCameraButton = document.getElementById("start-camera");
+            const capturePhotoButton = document.getElementById("capture-photo");
             const videoFeed = document.getElementById("video-feed");
 
             startCameraButton.style.display = "none"; // Skril gumb za vklop kamere
+            capturePhotoButton.style.display = "block"; // Pokazal gumb za zajem fotografije
             videoFeed.style.display = "block"; // Pokazal video posnetek
 
             navigator.mediaDevices.getUserMedia({ video: true })
@@ -110,15 +137,21 @@
 
         function closeCamera() {
             const startCameraButton = document.getElementById("start-camera");
+            const capturePhotoButton = document.getElementById("capture-photo");
             const videoFeed = document.getElementById("video-feed");
 
             startCameraButton.style.display = "block"; // Pokazal gumb za vklop kamere
+            capturePhotoButton.style.display = "none"; // Skril gumb za zajem fotografije
             videoFeed.style.display = "none"; // Skril video posnetek
 
             if (videoStream) {
                 const tracks = videoStream.getTracks();
                 tracks.forEach(track => track.stop());
             }
+        }
+
+        function capturePhoto() {
+            // Dodaj kodo za zajem fotografije
         }
     </script>
 </body>
