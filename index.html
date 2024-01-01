@@ -5,12 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moja Poroka</title>
     <style>
-        @keyframes flash {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-
         body {
             font-family: 'Arial', sans-serif;
             text-align: center;
@@ -27,14 +21,93 @@
             font-family: 'Lobster', cursive;
         }
 
-        button {
-            padding: 10px 20px;
-            font-size: 18px;
-            cursor: pointer;
+        #countdown {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #start-camera {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
             background-color: #405de6;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        #start-camera img {
+            width: 40px;
+            height: 40px;
+        }
+
+        #capture-photo {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 3; /* Povečajte vrednost z-index na 3 ali višje */
+            display: none;
+        }
+
+        #capture-photo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        #video-feed {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            object-fit: cover;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1; /* Zmanjšajte vrednost z-index na 1 */
+        }
+
+        #close-camera {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
             color: white;
-            border: none;
-            border-radius: 5px;
+            cursor: pointer;
+            z-index: 4;
+        }
+
+        #captured-photos {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        #captured-photos img {
+            margin: 5px;
+            max-width: 100px;
+            max-height: 100px;
+        }
+
+        /* Dodan del za učinek bliskavice */
+        @keyframes flash {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
         }
 
         #flash-overlay {
@@ -52,31 +125,20 @@
 </head>
 <body>
     <h1 id="welcome-text">Dobrodošli na Naši Poročni Spletni Strani</h1>
-    <button onclick="capturePhoto()">Zajemi fotografijo</button>
-
+    <p id="countdown">Čas do začetka poroke: <span id="countdown-timer"></span></p>
+    <div id="start-camera" onclick="openCamera()">
+        <img src="camera-icon.png" alt="Camera">
+    </div>
+    <div id="capture-photo" onclick="capturePhoto()">
+        <img src="capture-icon.png" alt="Capture Photo">
+    </div>
+    <video id="video-feed" autoplay muted></video>
+    <span id="close-camera" onclick="closeCamera()">✖</span>
+    <div id="captured-photos"></div>
     <div id="flash-overlay"></div>
 
     <script>
-        function capturePhoto() {
-            const flashOverlay = document.getElementById("flash-overlay");
-
-            flashOverlay.classList.add("flash-animation");
-
-            setTimeout(() => {
-                flashOverlay.classList.remove("flash-animation");
-            }, 500);
-
-            // Dodajte kodo za zajem fotografije tukaj
-            // Na primer:
-            // const videoFeed = document.getElementById("video-feed");
-            // const canvas = document.createElement("canvas");
-            // const context = canvas.getContext("2d");
-            // canvas.width = videoFeed.videoWidth;
-            // canvas.height = videoFeed.videoHeight;
-            // context.drawImage(videoFeed, 0, 0, canvas.width, canvas.height);
-            // const dataURL = canvas.toDataURL("image/png");
-            // console.log("Captured photo:", dataURL);
-        }
+        // ... (Ostala JavaScript koda ostane nespremenjena)
     </script>
 </body>
 </html>
