@@ -32,9 +32,9 @@
             left: 50%;
             transform: translateX(-50%);
             background-color: #405de6;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
+            width: 120px; /* Povečana širina gumba */
+            height: 60px; /* Višina gumba */
+            border-radius: 10px; /* Okrogli robovi */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -42,9 +42,10 @@
             z-index: 2;
         }
 
-        #start-camera img {
-            width: 40px;
-            height: 40px;
+        #start-camera span {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
         }
 
         #capture-photo {
@@ -60,7 +61,7 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            z-index: 3; /* Povečajte vrednost z-index na 3 ali višje */
+            z-index: 3;
             display: none;
         }
 
@@ -77,7 +78,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            z-index: 1; /* Zmanjšajte vrednost z-index na 1 */
+            z-index: 1;
         }
 
         #close-camera {
@@ -102,32 +103,13 @@
             max-width: 100px;
             max-height: 100px;
         }
-
-        #flash-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: white;
-            opacity: 0;
-            animation: flash 0.5s ease-in-out;
-            z-index: 5;
-            pointer-events: none;
-        }
-
-        @keyframes flash {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
-        }
     </style>
 </head>
 <body>
     <h1 id="welcome-text">Dobrodošli na Naši Poročni Spletni Strani</h1>
     <p id="countdown">Čas do začetka poroke: <span id="countdown-timer"></span></p>
     <div id="start-camera" onclick="openCamera()">
-        <img src="camera-icon.png" alt="Camera">
+        <span>FOTKAJ</span>
     </div>
     <div id="capture-photo" onclick="capturePhoto()">
         <img src="capture-icon.png" alt="Capture Photo">
@@ -135,7 +117,6 @@
     <video id="video-feed" autoplay muted></video>
     <span id="close-camera" onclick="closeCamera()">✖</span>
     <div id="captured-photos"></div>
-    <div id="flash-overlay"></div>
 
     <script>
         const weddingDate = new Date("2024-08-16T15:00:00").getTime();
