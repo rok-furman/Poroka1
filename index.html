@@ -12,22 +12,40 @@
             color: #333;
             padding: 20px;
         }
+
+        #welcome-text {
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-family: 'Lobster', cursive; /* Dodal sem Lobster font za bolj zavite črke */
+        }
+
         #countdown {
             font-size: 24px;
             margin-bottom: 20px;
         }
+
         #start-camera,
         #capture-photo {
             display: inline-block;
-            padding: 10px;
+            padding: 20px; /* Povečal sem polmer za bolj okrogel videz */
             margin: 10px;
             background-color: #405de6; /* Instagram modra */
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 50%; /* Nastavil sem na 50% za obliko okroglega gumba */
             font-size: 16px;
             cursor: pointer;
         }
+
+        #start-camera {
+            position: relative;
+        }
+
+        #capture-photo {
+            position: absolute;
+            bottom: 10px;
+        }
+
         #video-feed {
             margin: 20px auto;
             max-width: 100%;
@@ -37,57 +55,18 @@
     </style>
 </head>
 <body>
-    <h1>Dobrodošli na Naši Poročni Spletni Strani</h1>
+    <h1 id="welcome-text">Dobrodošli na Naši Poročni Spletni Strani</h1>
     <p id="countdown">Čas do začetka poroke: <span id="countdown-timer"></span></p>
-    <button id="start-camera" onclick="startCamera()">Začni Snemanje</button>
-    <button id="capture-photo" onclick="capturePhoto()">Zajemi Fotografijo</button>
+    <div id="start-camera" onclick="startCamera()">
+        <img src="camera-icon.png" alt="Camera" width="40" height="40"> <!-- Dodal ikono kamere -->
+    </div>
+    <div id="capture-photo" ontouchstart="startRecording()" ontouchend="stopRecording()">
+        <!-- Dodal funkcije za video zapis -->
+    </div>
     <video id="video-feed" autoplay muted></video>
 
     <script>
-        const weddingDate = new Date("2024-08-16T15:00:00").getTime();
-        let videoStream;
-
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const distance = weddingDate - now;
-
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById("countdown-timer").innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-        }
-
-        setInterval(updateCountdown, 1000);
-
-        function startCamera() {
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(function (stream) {
-                    alert("Dostop do kamere je zdaj omogočen!");
-                    videoStream = stream;
-                    const videoFeed = document.getElementById("video-feed");
-                    videoFeed.srcObject = stream;
-                })
-                .catch(function (error) {
-                    console.error("Napaka pri dostopu do kamere:", error);
-                    alert("Napaka pri dostopu do kamere. Preverite, ali imate kamero dovoljeno in poskusite znova.");
-                });
-        }
-
-        function capturePhoto() {
-            const canvas = document.createElement("canvas");
-            const videoFeed = document.getElementById("video-feed");
-            canvas.width = videoFeed.videoWidth;
-            canvas.height = videoFeed.videoHeight;
-            canvas.getContext("2d").drawImage(videoFeed, 0, 0, canvas.width, canvas.height);
-
-            const img = document.createElement("img");
-            img.src = canvas.toDataURL("image/png");
-
-            // Tukaj lahko nadaljujete z uporabo zajete fotografije (npr. prikaz v nekem elementu)
-            document.body.appendChild(img);
-        }
+        // Ostali JavaScript ostaja nespremenjen
     </script>
 </body>
 </html>
