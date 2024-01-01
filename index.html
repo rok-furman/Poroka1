@@ -12,6 +12,7 @@
             color: #333;
             padding: 20px;
             overflow: hidden; /* Skril presežek, ko je kamera v celozaslonskem načinu */
+            position: relative; /* Nastavi relativni položaj za pozicioniranje kroga */
         }
 
         #welcome-text {
@@ -25,34 +26,24 @@
             margin-bottom: 20px;
         }
 
-        #start-camera {
-            display: inline-block;
-            padding: 20px; /* Povečal sem polmer za bolj okrogel videz */
-            margin: 10px;
-            background-color: #405de6; /* Instagram modra */
-            color: white;
-            border: none;
-            border-radius: 50%; /* Nastavil sem na 50% za obliko okroglega gumba */
-            font-size: 16px;
+        .camera-button {
+            position: absolute;
+            bottom: 10px; /* Postavi krog na spodnji del strani */
+            left: 50%; /* Postavi krog na sredino glede na levo stran */
+            transform: translateX(-50%); /* Popravi položaj glede na širino kroga */
+            background-color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
         }
 
-        #start-camera img {
-            width: 40px; /* Nastavil širino ikone kamere */
-            height: 40px; /* Nastavil višino ikone kamere */
-        }
-
-        #capture-photo,
-        #record-video {
-            display: none; /* Skril gumbe za zajem fotografije in snemanje videa */
-            padding: 10px;
-            margin: 10px;
-            background-color: #405de6;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
+        .camera-button img {
+            width: 40px; /* Nastavi širino ikone kamere */
+            height: 40px; /* Nastavi višino ikone kamere */
         }
 
         #video-feed {
@@ -75,19 +66,15 @@
 <body>
     <h1 id="welcome-text">Dobrodošli na Naši Poročni Spletni Strani</h1>
     <p id="countdown">Čas do začetka poroke: <span id="countdown-timer"></span></p>
-    <div id="start-camera" onclick="openCamera()">
+    <div class="camera-button" id="start-camera" onclick="openCamera()">
         <img src="camera-icon.png" alt="Camera"> <!-- Dodal ikono kamere -->
     </div>
-    <button id="capture-photo" onclick="capturePhoto()">Zajemi Fotografijo</button>
-    <button id="record-video" onclick="toggleRecording()">Snemaj Video</button>
     <video id="video-feed" autoplay muted></video>
     <span id="close-camera" onclick="closeCamera()">✖</span>
 
     <script>
         const weddingDate = new Date("2024-08-16T15:00:00").getTime();
         let videoStream;
-        let mediaRecorder;
-        let isRecording = false;
 
         function updateCountdown() {
             const now = new Date().getTime();
@@ -105,24 +92,15 @@
 
         function openCamera() {
             const startCameraButton = document.getElementById("start-camera");
-            const capturePhotoButton = document.getElementById("capture-photo");
-            const recordVideoButton = document.getElementById("record-video");
             const videoFeed = document.getElementById("video-feed");
 
             startCameraButton.style.display = "none"; // Skril gumb za vklop kamere
-            capturePhotoButton.style.display = "inline-block"; // Pokazal gumb za zajem fotografije
-            recordVideoButton.style.display = "inline-block"; // Pokazal gumb za snemanje videa
             videoFeed.style.display = "block"; // Pokazal video posnetek
 
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(function (stream) {
                     videoStream = stream;
                     videoFeed.srcObject = stream;
-
-                    // Dodano snemanje videa
-                    mediaRecorder = new MediaRecorder(stream);
-                    mediaRecorder.ondataavailable = handleDataAvailable;
-                    mediaRecorder.onstop = handleRecordingStop;
                 })
                 .catch(function (error) {
                     console.error("Napaka pri dostopu do kamere:", error);
@@ -130,45 +108,11 @@
                 });
         }
 
-        function capturePhoto() {
-            // Dodaj kodo za zajem fotografije
-        }
-
-        function toggleRecording() {
-            if (isRecording) {
-                // Ustavi snemanje
-                mediaRecorder.stop();
-                isRecording = false;
-            } else {
-                // Začni snemanje
-                mediaRecorder.start();
-                isRecording = true;
-            }
-        }
-
-        function handleDataAvailable(event) {
-            // Obdelaj dostopne podatke (kadar je na voljo)
-            if (event.data.size > 0) {
-                const recordedBlob = new Blob([event.data], { type: 'video/webm' });
-                const url = URL.createObjectURL(recordedBlob);
-                window.open(url, '_blank'); // Odpri posnetek v novem zavihku
-                URL.revokeObjectURL(url);
-            }
-        }
-
-        function handleRecordingStop() {
-            // Po potrebi obdelaj dogodek ustavitve snemanja
-        }
-
         function closeCamera() {
             const startCameraButton = document.getElementById("start-camera");
-            const capturePhotoButton = document.getElementById("capture-photo");
-            const recordVideoButton = document.getElementById("record-video");
             const videoFeed = document.getElementById("video-feed");
 
             startCameraButton.style.display = "block"; // Pokazal gumb za vklop kamere
-            capturePhotoButton.style.display = "none"; // Skril gumb za zajem fotografije
-            recordVideoButton.style.display = "none"; // Skril gumb za snemanje videa
             videoFeed.style.display = "none"; // Skril video posnetek
 
             if (videoStream) {
