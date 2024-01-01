@@ -11,14 +11,14 @@
             background-color: #f8f8f8;
             color: #333;
             padding: 20px;
-            overflow: hidden; /* Skril presežek, ko je kamera v celozaslonskem načinu */
-            position: relative; /* Nastavi relativni položaj za pozicioniranje kroga */
+            overflow: hidden;
+            position: relative;
         }
 
         #welcome-text {
             font-size: 36px;
             margin-bottom: 20px;
-            font-family: 'Lobster', cursive; /* Dodal sem Lobster font za bolj zavite črke */
+            font-family: 'Lobster', cursive;
         }
 
         #countdown {
@@ -28,10 +28,10 @@
 
         #start-camera {
             position: absolute;
-            bottom: 10px; /* Postavi krog na spodnji del strani */
-            left: 50%; /* Postavi krog na sredino glede na levo stran */
-            transform: translateX(-50%); /* Popravi položaj glede na širino kroga */
-            background-color: #405de6; /* Instagram modra */
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #405de6;
             width: 60px;
             height: 60px;
             border-radius: 50%;
@@ -39,19 +39,19 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            z-index: 2; /* Postavi nad video */
+            z-index: 2;
         }
 
         #start-camera img {
-            width: 40px; /* Nastavi širino ikone kamere */
-            height: 40px; /* Nastavi višino ikone kamere */
+            width: 40px;
+            height: 40px;
         }
 
         #capture-photo {
             position: absolute;
-            bottom: 20px; /* Postavi krog na spodnji del strani */
-            left: 50%; /* Postavi krog na sredino glede na levo stran */
-            transform: translateX(-50%); /* Popravi položaj glede na širino kroga */
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             background-color: white;
             width: 60px;
             height: 60px;
@@ -60,18 +60,24 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            z-index: 1; /* Postavi pod gumb za vklop kamere */
+            z-index: 1;
+            display: none;
+        }
+
+        #capture-photo img {
+            width: 40px;
+            height: 40px;
         }
 
         #video-feed {
-            display: none; /* Skril video posnetek */
+            display: none;
             width: 100%;
             height: 100vh;
             object-fit: cover;
-            position: fixed; /* Popravi položaj za prikaz čez cel zaslon */
+            position: fixed;
             top: 0;
             left: 0;
-            z-index: 3; /* Postavi nad gumboma */
+            z-index: 3;
         }
 
         #close-camera {
@@ -81,7 +87,20 @@
             font-size: 24px;
             color: white;
             cursor: pointer;
-            z-index: 4; /* Postavi nad videom */
+            z-index: 4;
+        }
+
+        #captured-photos {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        #captured-photos img {
+            margin: 5px;
+            max-width: 100px;
+            max-height: 100px;
         }
     </style>
 </head>
@@ -89,17 +108,19 @@
     <h1 id="welcome-text">Dobrodošli na Naši Poročni Spletni Strani</h1>
     <p id="countdown">Čas do začetka poroke: <span id="countdown-timer"></span></p>
     <div id="start-camera" onclick="openCamera()">
-        <img src="camera-icon.png" alt="Camera"> <!-- Dodal ikono kamere -->
+        <img src="camera-icon.png" alt="Camera">
     </div>
-    <div id="capture-photo" style="display: none;" onclick="capturePhoto()">
-        <!-- Dodaj kodo za ikono za zajem fotografije -->
+    <div id="capture-photo" onclick="capturePhoto()">
+        <img src="capture-icon.png" alt="Capture Photo">
     </div>
     <video id="video-feed" autoplay muted></video>
     <span id="close-camera" onclick="closeCamera()">✖</span>
+    <div id="captured-photos"></div>
 
     <script>
         const weddingDate = new Date("2024-08-16T15:00:00").getTime();
         let videoStream;
+        let photoCounter = 1;
 
         function updateCountdown() {
             const now = new Date().getTime();
@@ -120,9 +141,9 @@
             const capturePhotoButton = document.getElementById("capture-photo");
             const videoFeed = document.getElementById("video-feed");
 
-            startCameraButton.style.display = "none"; // Skril gumb za vklop kamere
-            capturePhotoButton.style.display = "block"; // Pokazal gumb za zajem fotografije
-            videoFeed.style.display = "block"; // Pokazal video posnetek
+            startCameraButton.style.display = "none";
+            capturePhotoButton.style.display = "block";
+            videoFeed.style.display = "block";
 
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(function (stream) {
@@ -140,9 +161,9 @@
             const capturePhotoButton = document.getElementById("capture-photo");
             const videoFeed = document.getElementById("video-feed");
 
-            startCameraButton.style.display = "block"; // Pokazal gumb za vklop kamere
-            capturePhotoButton.style.display = "none"; // Skril gumb za zajem fotografije
-            videoFeed.style.display = "none"; // Skril video posnetek
+            startCameraButton.style.display = "block";
+            capturePhotoButton.style.display = "none";
+            videoFeed.style.display = "none";
 
             if (videoStream) {
                 const tracks = videoStream.getTracks();
@@ -151,7 +172,25 @@
         }
 
         function capturePhoto() {
-            // Dodaj kodo za zajem fotografije
+            const videoFeed = document.getElementById("video-feed");
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+
+            canvas.width = videoFeed.videoWidth;
+            canvas.height = videoFeed.videoHeight;
+
+            context.drawImage(videoFeed, 0, 0, canvas.width, canvas.height);
+
+            const dataURL = canvas.toDataURL("image/png");
+            const capturedImage = new Image();
+            capturedImage.src = dataURL;
+
+            const capturedPhotosContainer = document.getElementById("captured-photos");
+            capturedImage.alt = `Captured Photo ${photoCounter}`;
+            capturedImage.onclick = () => window.open(dataURL, "_blank");
+
+            capturedPhotosContainer.appendChild(capturedImage);
+            photoCounter++;
         }
     </script>
 </body>
