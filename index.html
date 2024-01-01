@@ -3,125 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moja Poroka</title>
+    <title>Facebook Messenger Camera</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            text-align: center;
-            background-color: #f8f8f8;
-            color: #333;
-            padding: 20px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        #welcome-text {
-            font-size: 36px;
-            margin-bottom: 20px;
-            font-family: 'Lobster', cursive;
-        }
-
-        #countdown {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        #start-camera {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #405de6;
-            width: 100px;
-            height: 60px;
-            border-radius: 10px;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            cursor: pointer;
-            z-index: 2;
-            color: white;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000;
         }
 
-        #start-camera img {
-            width: 40px;
-            height: 40px;
+        #camera-container {
+            position: relative;
+            width: 300px;
+            height: 500px;
+            overflow: hidden;
+            border: 2px solid #fff;
+            border-radius: 10px;
         }
 
-        #capture-photo {
+        #camera-preview {
+            width: 100%;
+            height: 100%;
+        }
+
+        #shutter-button {
             position: absolute;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background-color: #fff;
+            color: #000;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            z-index: 3; 
-            display: none;
-        }
-
-        #capture-photo img {
-            width: 40px;
-            height: 40px;
-        }
-
-        #video-feed {
-            display: none;
-            width: 100%;
-            height: 100vh;
-            object-fit: cover;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1; 
-        }
-
-        #close-camera {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 24px;
-            color: white;
-            cursor: pointer;
-            z-index: 4;
-        }
-
-        #captured-photos {
-            margin-top: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        #captured-photos img {
-            margin: 5px;
-            max-width: 100px;
-            max-height: 100px;
         }
     </style>
 </head>
 <body>
-    <h1 id="welcome-text">Dobrodošli na Naši Poročni Spletni Strani</h1>
-    <p id="countdown">Čas do začetka poroke: <span id="countdown-timer"></span></p>
-    <div id="start-camera" onclick="openCamera()">
-        <img src="camera-icon.png" alt="Camera">
-        <span style="font-size: 18px;">FOTKAJ</span>
+    <div id="camera-container">
+        <video id="camera-preview" autoplay playsinline></video>
+        <button id="shutter-button" onclick="capturePhoto()">Zajemi fotografijo</button>
     </div>
-    <div id="capture-photo" onclick="capturePhoto()">
-        <img src="capture-icon.png" alt="Capture Photo">
-    </div>
-    <video id="video-feed" autoplay muted></video>
-    <span id="close-camera" onclick="closeCamera()">✖</span>
-    <div id="captured-photos"></div>
 
     <script>
-        // Dodajte preostali del kode za odštevalnik, funkcije odpiranja/ustavitve kamere, zajemanja fotografij, itd.
+        // Dodajte JavaScript za delovanje kamere, kot je zajemanje fotografij
+        const cameraPreview = document.getElementById('camera-preview');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                cameraPreview.srcObject = stream;
+            })
+            .catch((error) => {
+                console.error('Napaka pri dostopu do kamere:', error);
+            });
+
+        function capturePhoto() {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = cameraPreview.videoWidth;
+            canvas.height = cameraPreview.videoHeight;
+            context.drawImage(cameraPreview, 0, 0, canvas.width, canvas.height);
+
+            // Tukaj lahko s canvas manipulirate (na primer shranite sliko ali prikažete učinek bliskavice)
+        }
     </script>
 </body>
 </html>
