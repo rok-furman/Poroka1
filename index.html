@@ -34,9 +34,6 @@
     <button id="start-camera" onclick="startCamera()">Začni Snemanje</button>
 
     <script>
-        // Dodaj kodo za odštevalnik in dostop do kamere tukaj
-
-        // Primer odštevalnika
         const weddingDate = new Date("2024-08-16T15:00:00").getTime();
 
         function updateCountdown() {
@@ -51,13 +48,18 @@
             document.getElementById("countdown-timer").innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
         }
 
-        // Posodobi odštevalnik vsako sekundo
         setInterval(updateCountdown, 1000);
 
-        // Funkcija za začetek snemanja kamere
         function startCamera() {
-            // Dodaj kodo za dostop do kamere tukaj
-            alert("Dostop do kamere je zdaj omogočen!");
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    alert("Dostop do kamere je zdaj omogočen!");
+                    // Tukaj lahko nadaljujete z uporabo stream-a (npr. prikaz slike v nekem elementu)
+                })
+                .catch(function (error) {
+                    console.error("Napaka pri dostopu do kamere:", error);
+                    alert("Napaka pri dostopu do kamere. Preverite, ali imate kamero dovoljeno in poskusite znova.");
+                });
         }
     </script>
 </body>
