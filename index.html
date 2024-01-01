@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Najina Poroka</title>
+    <title>Moja Poroka</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -103,13 +103,6 @@
             max-height: 100px;
         }
 
-        /* Dodan del za učinek bliskavice */
-        @keyframes flash {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-
         #flash-overlay {
             position: fixed;
             top: 0;
@@ -117,10 +110,16 @@
             width: 100vw;
             height: 100vh;
             background-color: white;
-            opacity: 0; /* Dodano */
+            opacity: 0;
             animation: flash 0.5s ease-in-out;
             z-index: 5;
             pointer-events: none;
+        }
+
+        @keyframes flash {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
         }
     </style>
 </head>
@@ -139,7 +138,88 @@
     <div id="flash-overlay"></div>
 
     <script>
-        // ... (Ostala JavaScript koda ostane nespremenjena)
+        const weddingDate = new Date("2024-08-16T15:00:00").getTime();
+        let videoStream;
+        let photoCounter = 1;
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = weddingDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("countdown-timer").innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        setInterval(updateCountdown, 1000);
+
+        function openCamera() {
+            const startCameraButton = document.getElementById("start-camera");
+            const capturePhotoButton = document.getElementById("capture-photo");
+            const videoFeed = document.getElementById("video-feed");
+
+            startCameraButton.style.display = "none";
+            capturePhotoButton.style.display = "block";
+            capturePhotoButton.style.zIndex = "3"; // Povečajte vrednost z-index na 3 ali višje
+            videoFeed.style.display = "block";
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    videoStream = stream;
+                    videoFeed.srcObject = stream;
+                })
+                .catch(function (error) {
+                    console.error("Napaka pri dostopu do kamere:", error);
+                    alert("Napaka pri dostopu do kamere. Preverite, ali imate kamero dovoljeno in poskusite znova.");
+                });
+        }
+
+        function closeCamera() {
+            const startCameraButton = document.getElementById("start-camera");
+            const capturePhotoButton = document.getElementById("capture-photo");
+            const videoFeed = document.getElementById("video-feed");
+
+            startCameraButton.style.display = "block";
+            capturePhotoButton.style.display = "none";
+            videoFeed.style.display = "none";
+
+            if (videoStream) {
+                const tracks = videoStream.getTracks();
+                tracks.forEach(track => track.stop());
+            }
+        }
+
+        function capturePhoto() {
+            const videoFeed = document.getElementById("video-feed");
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+
+            canvas.width = videoFeed.videoWidth;
+            canvas.height = videoFeed.videoHeight;
+
+            context.drawImage(videoFeed, 0, 0, canvas.width, canvas.height);
+
+            const dataURL = canvas.toDataURL("image/png");
+            const capturedImage = new Image();
+            capturedImage.src = dataURL;
+
+            const capturedPhotosContainer = document.getElementById("captured-photos");
+            capturedImage.alt = `Captured Photo ${photoCounter}`;
+            capturedImage.onclick = () => window.open(dataURL, "_blank");
+
+            capturedPhotosContainer.appendChild(capturedImage);
+            photoCounter++;
+
+            // Dodan del za učinek bliskavice
+            const flashOverlay = document.getElementById("flash-overlay");
+            flashOverlay.style.opacity = "1";
+            setTimeout(() => {
+                flashOverlay.style.opacity = "0";
+            }, 500);
+        }
     </script>
 </body>
 </html>
