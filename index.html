@@ -26,28 +26,6 @@
             margin-bottom: 20px;
         }
 
-        #start-camera {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #405de6;
-            width: 120px; /* Povečana širina gumba */
-            height: 60px; /* Višina gumba */
-            border-radius: 10px; /* Okrogli robovi */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            z-index: 2;
-        }
-
-        #start-camera span {
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-        }
-
         #capture-photo {
             position: absolute;
             bottom: 20px;
@@ -103,6 +81,28 @@
             max-width: 100px;
             max-height: 100px;
         }
+
+        #start-camera {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #405de6;
+            width: 120px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        #start-camera span {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -144,7 +144,7 @@
 
             startCameraButton.style.display = "none";
             capturePhotoButton.style.display = "block";
-            capturePhotoButton.style.zIndex = "3"; // Povečajte vrednost z-index na 3 ali višje
+            capturePhotoButton.style.zIndex = "3";
             videoFeed.style.display = "block";
 
             navigator.mediaDevices.getUserMedia({ video: true })
@@ -193,13 +193,6 @@
 
             capturedPhotosContainer.appendChild(capturedImage);
             photoCounter++;
-
-            // Dodan del za učinek bliskavice
-            const flashOverlay = document.getElementById("flash-overlay");
-            flashOverlay.style.opacity = "1";
-            setTimeout(() => {
-                flashOverlay.style.opacity = "0";
-            }, 500);
         }
     </script>
 </body>
