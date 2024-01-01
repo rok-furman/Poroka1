@@ -36,10 +36,12 @@
             height: 60px;
             border-radius: 10px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             cursor: pointer;
             z-index: 2;
+            color: white;
         }
 
         #start-camera img {
@@ -108,7 +110,8 @@
     <h1 id="welcome-text">Dobrodošli na Naši Poročni Spletni Strani</h1>
     <p id="countdown">Čas do začetka poroke: <span id="countdown-timer"></span></p>
     <div id="start-camera" onclick="openCamera()">
-        <img src="camera-icon.png" alt="Camera"> FOTKAJ
+        <img src="camera-icon.png" alt="Camera">
+        <span style="font-size: 18px;">FOTKAJ</span>
     </div>
     <div id="capture-photo" onclick="capturePhoto()">
         <img src="capture-icon.png" alt="Capture Photo">
